@@ -150,13 +150,67 @@
     const cards = document.getElementById("cards");
     const search = document.getElementById("search");
     const status = document.getElementById("status");
+    
+const SUPABASE_URL = "https://gbsoqczmsvrnpyicbgtw.supabase.co";
+const SUPABASE_KEY = "sb_publishable_947mroYb6QbYYMIFb3IaNw_SDETmt7N";
+
+async function loadApprovedEntries() {
+  try {
+    const response = await fetch(
+      `${SUPABASE_URL}/rest/v1/meme_suggestions?select=coin_name,reason,submitted_at&status=eq.approved&order=submitted_at.desc`,
+      {
+        headers: {
+          apikey: SUPABASE_KEY
+        }
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Could not load approved entries");
+    }
+
+    const rows = await response.json();
+
+    approvedEntries = rows.map(row => {
+      const tickerMatch = row.reason.match(/Ticker:\s*([^\n]+)/);
+      const statusMatch = row.reason.match(/Status:\s*([^\n]+)/);
+      const story = row.reason
+        .replace(/Ticker:\s*[^\n]+\n?/, "")
+        .replace(/Status:\s*[^\n]+\n?/, "")
+        .replace(/Source:\s*https?:\/\/\S+/g, "")
+        .trim();
+
+      return {
+        name: row.coin_name,
+        ticker: tickerMatch ? tickerMatch[1].trim() : "",
+        status: statusMatch &&
+          /inactive/i.test(statusMatch[1]) ? "inactive" :
+          statusMatch && /revival/i.test(statusMatch[1]) ? "revival" : "active",
+        story: story || row.reason,
+        date: row.submitted_at
+          ? new Date(row.submitted_at).toLocaleDateString()
+          : "Community suggestion",
+        source: ""
+      };
+    });
+
+    render();
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 
     function getSuggestions() {
       try { return JSON.parse(localStorage.getItem(storageKey) || "[]"); }
       catch { return []; }
     }
 
-    function allEntries() { return [...demoEntries, ...getSuggestions()]; }
+    let approvedEntries = [];
+
+function allEntries() {
+  return [...demoEntries, ...approvedEntries, ...getSuggestions()];
+}
 
     function escapeHtml(value) {
       return String(value).replace(/[&<>"']/g, char => ({
@@ -261,6 +315,7 @@ document.getElementById("suggestForm").addEventListener("submit", async (event) 
 
 
     render();
+    loadApprovedEntries();
   </script>
 </body>
 </html>
