@@ -194,29 +194,71 @@
     search.addEventListener("input", render);
     status.addEventListener("change", render);
 
-    document.getElementById("suggestForm").addEventListener("submit", event => {
-      event.preventDefault();
-      const entry = {
-        name: document.getElementById("tokenName").value.trim(),
-        ticker: document.getElementById("tokenTicker").value.trim().toUpperCase(),
-        status: document.getElementById("tokenStatus").value,
-        story: document.getElementById("tokenStory").value.trim(),
-        source: document.getElementById("tokenSource").value.trim(),
-        date: "Local suggestion"
-      };
-      if (!entry.name || !entry.story) return;
-      const suggestions = getSuggestions();
-      suggestions.unshift(entry);
-      try {
-        localStorage.setItem(storageKey, JSON.stringify(suggestions));
-        document.getElementById("formMessage").textContent = "Saved on this device. It is not published to the internet.";
-      } catch {
-        document.getElementById("formMessage").textContent = "This browser could not save the suggestion. You can still explore the demo.";
+    
+document.getElementById("suggestForm").addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  const message = document.getElementById("formMessage");
+  const button = event.target.querySelector('button[type="submit"]');
+
+  const name = document.getElementById("tokenName").value.trim();
+  const ticker = document.getElementById("tokenTicker").value.trim().toUpperCase();
+  const status = document.getElementById("tokenStatus").value;
+  const story = document.getElementById("tokenStory").value.trim();
+  const source = document.getElementById("tokenSource").value.trim();
+
+  if (!name || !story) {
+    message.textContent = "Please enter a coin name and explanation.";
+    message.style.display = "block";
+    return;
+  }
+
+  const details = [
+    ticker ? "Ticker: " + ticker : "",
+    "Status: " + status,
+    story,
+    source ? "Source: " + source : ""
+  ].filter(Boolean).join("\n");
+
+  button.disabled = true;
+  button.textContent = "Submitting...";
+  message.style.display = "block";
+
+  try {
+    const response = await fetch(
+      "https://gbsoqczmsvrnpyicbgtw.supabase.co/rest/v1/meme_suggestions",
+      {
+        method: "POST",
+        headers: {
+          "apikey": "sb_publishable_947mroYb6QbYYMIFb3IaNw_SDETmt7N",
+          "Authorization": "Bearer sb_publishable_947mroYb6QbYYMIFb3IaNw_SDETmt7N",
+          "Content-Type": "application/json",
+          "Prefer": "return=minimal"
+        },
+        body: JSON.stringify({
+          coin_name: name,
+          reason: details,
+          network: "Solana"
+        })
       }
-      document.getElementById("formMessage").style.display = "block";
-      event.target.reset();
-      render();
-    });
+    );
+
+    if (!response.ok) {
+      throw new Error("Submission failed (" + response.status + ")");
+    }
+
+    message.textContent = "Suggestion submitted successfully!";
+    event.target.reset();
+  } catch (error) {
+    console.error(error);
+    message.textContent =
+      "Submission failed. Please check your connection and try again.";
+  } finally {
+    button.disabled = false;
+    button.textContent = "Submit suggestion";
+  }
+});
+
 
     render();
   </script>
