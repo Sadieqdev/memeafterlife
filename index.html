@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="MemeAfterlife preserves the stories and public history of Solana memecoins.">
+  <title>MemeAfterlife — Every meme has a history</title>
+  <style>
+    :root {
+      --bg: #0b0b12; --panel: #151522; --panel2: #1c1b2c;
+      --text: #f5f3ff; --muted: #b0aec5; --line: #302d45;
+      --purple: #a78bfa; --cyan: #67e8f9; --green: #86efac;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, sans-serif; background: radial-gradient(circle at 80% 0%, #272044 0, var(--bg) 40%); color: var(--text); line-height: 1.55; }
+    a { color: var(--cyan); }
+    .wrap { width: min(1100px, 92%); margin: auto; }
+    header { padding: 22px 0; border-bottom: 1px solid var(--line); }
+    .brand { font-weight: 850; letter-spacing: .3px; font-size: 1.15rem; }
+    .brand span { color: var(--purple); }
+    .hero { padding: 62px 0 36px; }
+    .eyebrow { color: var(--cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 2px; font-size: .76rem; }
+    h1 { font-size: clamp(2.4rem, 7vw, 4.8rem); line-height: 1.03; margin: 12px 0; max-width: 850px; letter-spacing: -2px; }
+    h1 span { color: var(--purple); }
+    .lead { color: var(--muted); font-size: 1.12rem; max-width: 680px; }
+    .notice { margin-top: 22px; border: 1px solid #4a426c; background: #171426; border-radius: 12px; padding: 13px 15px; color: #d9d3f4; font-size: .92rem; }
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 26px 0 40px; }
+    .stat, .card, .panel { background: rgba(21,21,34,.92); border: 1px solid var(--line); border-radius: 16px; }
+    .stat { padding: 17px; } .stat strong { display: block; font-size: 1.5rem; } .stat small { color: var(--muted); }
+    section { padding: 24px 0 44px; }
+    .section-head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 16px; margin-bottom: 18px; }
+    h2 { margin: 0; font-size: 1.65rem; }
+    .muted { color: var(--muted); }
+    .controls { display: grid; grid-template-columns: 1fr 210px; gap: 10px; width: min(560px, 100%); }
+    input, select, textarea, button { font: inherit; }
+    input, select, textarea { width: 100%; color: var(--text); background: #10101a; border: 1px solid #3a3652; border-radius: 10px; padding: 12px 13px; }
+    input::placeholder, textarea::placeholder { color: #8e8aa7; }
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .card { padding: 18px; display: flex; flex-direction: column; min-height: 230px; }
+    .tag { display: inline-flex; align-self: flex-start; font-size: .75rem; border: 1px solid #514776; color: #d8ccff; padding: 3px 9px; border-radius: 99px; margin-bottom: 12px; }
+    .card h3 { margin: 0 0 7px; font-size: 1.16rem; }
+    .card p { margin: 0 0 14px; color: var(--muted); font-size: .93rem; }
+    .card .meta { margin-top: auto; padding-top: 12px; border-top: 1px solid var(--line); font-size: .8rem; color: #d1cde3; }
+    .empty { padding: 28px; text-align: center; border: 1px dashed #49435f; border-radius: 14px; color: var(--muted); grid-column: 1 / -1; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .panel { padding: 22px; }
+    .panel h3 { margin-top: 0; }
+    .steps { padding-left: 20px; color: var(--muted); }
+    .steps li { margin: 8px 0; }
+    .form-grid { display: grid; gap: 12px; }
+    button { cursor: pointer; border: 0; background: var(--purple); color: #151024; border-radius: 10px; padding: 12px 16px; font-weight: 800; }
+    button:hover { filter: brightness(1.08); }
+    .secondary { background: transparent; color: var(--text); border: 1px solid #4a426c; }
+    .form-note { font-size: .82rem; color: var(--muted); }
+    footer { border-top: 1px solid var(--line); padding: 24px 0 40px; color: var(--muted); font-size: .86rem; }
+    .toast { display: none; margin-top: 12px; padding: 10px 12px; border-radius: 10px; background: #10261c; border: 1px solid #276344; color: var(--green); }
+    @media (max-width: 760px) {
+      .grid { grid-template-columns: 1fr; }
+      .two-col { grid-template-columns: 1fr; }
+      .stats { grid-template-columns: 1fr; }
+      .controls { grid-template-columns: 1fr; }
+      .hero { padding-top: 42px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap brand">☾ Meme<span>Afterlife</span></div>
+  </header>
+
+  <main class="wrap">
+    <div class="hero">
+      <div class="eyebrow">The Solana memecoin memory archive</div>
+      <h1>Every meme<br>has a <span>history.</span></h1>
+      <p class="lead">A community-built archive for preserving memecoin stories, public milestones, and revival attempts—even after the hype fades.</p>
+      <div class="notice"><strong>Early prototype:</strong> The entries below are examples for testing the website, not verified token records. Replace them with researched sources before publishing publicly.</div>
+      <div class="stats">
+        <div class="stat"><strong id="tokenCount">3</strong><small>Archive entries (demo)</small></div>
+        <div class="stat"><strong>Public history</strong><small>Evidence before rumours</small></div>
+        <div class="stat"><strong>Community-led</strong><small>Preserve, document, learn</small></div>
+      </div>
+    </div>
+
+    <section id="archive">
+      <div class="section-head">
+        <div><h2>Explore the archive</h2><div class="muted">Search demo entries by name, ticker, or story.</div></div>
+        <div class="controls">
+          <input id="search" type="search" placeholder="Search tokens or stories..." aria-label="Search archive">
+          <select id="status" aria-label="Filter by status">
+            <option value="all">All statuses</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+            <option value="revival">Revival attempt</option>
+          </select>
+        </div>
+      </div>
+      <div id="cards" class="grid" aria-live="polite"></div>
+    </section>
+
+    <section>
+      <div class="two-col">
+        <div class="panel">
+          <h3>What MemeAfterlife records</h3>
+          <ol class="steps">
+            <li>Public launch details and dated announcements.</li>
+            <li>Important on-chain events, with transaction links when available.</li>
+            <li>Community archives and revival proposals.</li>
+            <li>Sources, uncertainty, and corrections.</li>
+          </ol>
+          <p class="form-note">A falling price alone does not prove that a token is abandoned or fraudulent. The archive should distinguish verified facts, claims, and opinions.</p>
+        </div>
+        <div class="panel" id="submit">
+          <h3>Suggest an archive entry</h3>
+          <p class="muted">This demo form saves suggestions only in this browser. It does not publish them online or send them to a server.</p>
+          <form id="suggestForm" class="form-grid">
+            <input id="tokenName" required maxlength="60" placeholder="Token / project name">
+            <input id="tokenTicker" maxlength="15" placeholder="Ticker (optional)">
+            <select id="tokenStatus">
+              <option value="active">Active / ongoing</option>
+              <option value="inactive">Possibly inactive</option>
+              <option value="revival">Revival attempt</option>
+            </select>
+            <textarea id="tokenStory" required maxlength="500" rows="3" placeholder="What should be preserved? Include dates and sources if you have them."></textarea>
+            <input id="tokenSource" type="url" placeholder="Source URL (optional, https://...)">
+            <button type="submit">Save suggestion on this device</button>
+            <div id="formMessage" class="toast" role="status"></div>
+          </form>
+          <p class="form-note">Do not submit private keys, recovery phrases, personal data, or unsupported accusations.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <strong>MemeAfterlife</strong> — preserving internet culture with care.<br>
+      This is an educational prototype, not financial advice, a token sale, or a guarantee that any token is safe.
+    </div>
+  </footer>
+
+  <script>
+    // These are intentionally fictional demo entries. Replace with verified research before launch.
+    const demoEntries = [
+      { name: "Example Token One", ticker: "EX1", status: "active", story: "Demo record showing how a project summary and source trail could appear. This is not a real token claim.", date: "Demo record", source: "" },
+      { name: "Example Token Two", ticker: "EX2", status: "inactive", story: "Demo record for documenting a project with little recent public activity. Inactivity would need evidence and a clear date range.", date: "Demo record", source: "" },
+      { name: "Example Token Three", ticker: "EX3", status: "revival", story: "Demo record for tracking a community revival proposal, including who proposed it and where the proposal can be verified.", date: "Demo record", source: "" }
+    ];
+
+    const storageKey = "memeafterlife_suggestions_v1";
+    const cards = document.getElementById("cards");
+    const search = document.getElementById("search");
+    const status = document.getElementById("status");
+
+    function getSuggestions() {
+      try { return JSON.parse(localStorage.getItem(storageKey) || "[]"); }
+      catch { return []; }
+    }
+
+    function allEntries() { return [...demoEntries, ...getSuggestions()]; }
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, char => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      }[char]));
+    }
+
+    function render() {
+      const term = search.value.trim().toLowerCase();
+      const chosenStatus = status.value;
+      const filtered = allEntries().filter(item => {
+        const matchesText = [item.name, item.ticker, item.story].join(" ").toLowerCase().includes(term);
+        return matchesText && (chosenStatus === "all" || item.status === chosenStatus);
+      });
+
+      document.getElementById("tokenCount").textContent = allEntries().length;
+      if (!filtered.length) {
+        cards.innerHTML = '<div class="empty">No matching entries. Try another search.</div>';
+        return;
+      }
+      cards.innerHTML = filtered.map(item => {
+        const statusLabel = {active:"Active / ongoing", inactive:"Possibly inactive", revival:"Revival attempt"}[item.status] || "Unreviewed";
+        const source = item.source && /^https?:\/\//i.test(item.source)
+          ? `<a href="${escapeHtml(item.source)}" target="_blank" rel="noopener noreferrer">Open submitted source</a>`
+          : "No source link supplied";
+        return `<article class="card">
+          <span class="tag">${escapeHtml(statusLabel)}</span>
+          <h3>${escapeHtml(item.name)}${item.ticker ? " (" + escapeHtml(item.ticker) + ")" : ""}</h3>
+          <p>${escapeHtml(item.story)}</p>
+          <div class="meta">${escapeHtml(item.date || "Community suggestion")} · ${source}</div>
+        </article>`;
+      }).join("");
+    }
+
+    search.addEventListener("input", render);
+    status.addEventListener("change", render);
+
+    document.getElementById("suggestForm").addEventListener("submit", event => {
+      event.preventDefault();
+      const entry = {
+        name: document.getElementById("tokenName").value.trim(),
+        ticker: document.getElementById("tokenTicker").value.trim().toUpperCase(),
+        status: document.getElementById("tokenStatus").value,
+        story: document.getElementById("tokenStory").value.trim(),
+        source: document.getElementById("tokenSource").value.trim(),
+        date: "Local suggestion"
+      };
+      if (!entry.name || !entry.story) return;
+      const suggestions = getSuggestions();
+      suggestions.unshift(entry);
+      try {
+        localStorage.setItem(storageKey, JSON.stringify(suggestions));
+        document.getElementById("formMessage").textContent = "Saved on this device. It is not published to the internet.";
+      } catch {
+        document.getElementById("formMessage").textContent = "This browser could not save the suggestion. You can still explore the demo.";
+      }
+      document.getElementById("formMessage").style.display = "block";
+      event.target.reset();
+      render();
+    });
+
+    render();
+  </script>
+</body>
+</html>
