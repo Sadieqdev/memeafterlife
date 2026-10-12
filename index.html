@@ -95,6 +95,23 @@
         </div>
       </div>
       <div id="cards" class="grid" aria-live="polite"></div>
+      
+<div class="address-search" style="margin-bottom: 18px;">
+  <h3>Search by Solana Contract Address</h3>
+  <p class="muted">Find a token already in the approved archive.</p>
+  <input
+    id="contractSearch"
+    type="text"
+    placeholder="Paste Solana mint address..."
+    aria-label="Solana contract address"
+    autocomplete="off"
+  >
+  <button id="searchContract" type="button" style="margin-top: 10px;">
+    Search Archive
+  </button>
+  <div id="contractResult" class="toast" role="status" aria-live="polite"></div>
+</div>
+
     </section>
 
     <section>
@@ -115,6 +132,9 @@
           <form id="suggestForm" class="form-grid">
             <input id="tokenName" required maxlength="60" placeholder="Token / project name">
             <input id="tokenTicker" maxlength="15" placeholder="Ticker (optional)">
+            
+<input id="tokenAddress" type="text" maxlength="120" placeholder="Solana contract / mint address (optional)">
+
             <select id="tokenStatus">
               <option value="active">Active / ongoing</option>
               <option value="inactive">Possibly inactive</option>
@@ -156,8 +176,9 @@ const SUPABASE_KEY = "sb_publishable_947mroYb6QbYYMIFb3IaNw_SDETmt7N";
 
 async function loadApprovedEntries() {
   try {
-    const response = await fetch(
-      `${SUPABASE_URL}/rest/v1/meme_suggestions?select=coin_name,reason,submitted_at&status=eq.approved&order=submitted_at.desc`,
+    const response = await fetch(  
+`${SUPABASE_URL}/rest/v1/meme_suggestions?select=coin_name,token_address,reason,submitted_at&status=eq.approved&order=submitted_at.desc`,
+`,
       {
         headers: {
           apikey: SUPABASE_KEY
@@ -180,8 +201,11 @@ async function loadApprovedEntries() {
         .replace(/Source:\s*https?:\/\/\S+/g, "")
         .trim();
 
+      
       return {
-        name: row.coin_name,
+          name: row.coin_name,
+          address: row.token_address || "",
+
         ticker: tickerMatch ? tickerMatch[1].trim() : "",
         status: statusMatch &&
           /inactive/i.test(statusMatch[1]) ? "inactive" :
@@ -248,6 +272,35 @@ function allEntries() {
     search.addEventListener("input", render);
     status.addEventListener("change", render);
 
+document.getElementById("searchContract").addEventListener("click", () => {
+  const input = document.getElementById("contractSearch");
+  const result = document.getElementById("contractResult");
+  const address = input.value.trim();
+
+  result.style.display = "block";
+
+  if (!address) {
+    result.textContent = "Please enter a Solana contract address.";
+    return;
+  }
+
+  const match = approvedEntries.find(item =>
+    item.address &&
+    item.address.trim().toLowerCase() === address.toLowerCase()
+  );
+
+  if (!match) {
+    result.textContent = "No approved archive entry found for this address.";
+    return;
+  }
+
+  result.innerHTML =
+    "<strong>Archive entry found:</strong> " +
+    escapeHtml(match.name) +
+    (match.ticker ? " (" + escapeHtml(match.ticker) + ")" : "") +
+    "<br>" + escapeHtml(match.story);
+});
+
     
 document.getElementById("suggestForm").addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -257,6 +310,9 @@ document.getElementById("suggestForm").addEventListener("submit", async (event) 
 
   const name = document.getElementById("tokenName").value.trim();
   const ticker = document.getElementById("tokenTicker").value.trim().toUpperCase();
+  
+  const tokenAddress = document.getElementById("tokenAddress").value.trim();
+
   const status = document.getElementById("tokenStatus").value;
   const story = document.getElementById("tokenStory").value.trim();
   const source = document.getElementById("tokenSource").value.trim();
@@ -289,11 +345,14 @@ document.getElementById("suggestForm").addEventListener("submit", async (event) 
           "Content-Type": "application/json",
           "Prefer": "return=minimal"
         },
-        body: JSON.stringify({
-          coin_name: name,
-          reason: details,
-          network: "Solana"
-        })
+       
+body: JSON.stringify({
+  coin_name: name,
+  token_address: tokenAddress || null,
+  reason: details,
+  network: "Solana"
+})
+ 
       }
     );
 
